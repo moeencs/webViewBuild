@@ -27,6 +27,10 @@
     <script>
       window.modelDataUrl = 'http://24.199.73.208/models/ready.zip';
 
+      window.handleViewerMessage = function(message) {
+        alert('Message from Unity:\n' + message);
+      };
+
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
