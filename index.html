@@ -19,11 +19,14 @@
       <div id="unity-warning"> </div>
       <div id="unity-footer">
         <div id="unity-webgl-logo"></div>
+        <button id="unity-action-button">Click me!</button>
         <div id="unity-fullscreen-button"></div>
         <div id="unity-build-title">3D_Viewer</div>
       </div>
     </div>
     <script>
+      window.modelDataUrl = 'http://24.199.73.208/models/ready.zip';
+
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
@@ -102,9 +105,16 @@
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
+        document.getElementById("unity-action-button").onclick = () => {
+            const value = prompt("Enter the value to send to Unity");
+            // FIXME: now only integer values are supported by unity
+            window.unityInstance.SendMessage("LoadModelFromURL", "GetDataFromButtonClick", parseInt(value));
+        };
+
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
+          window.unityInstance = unityInstance;
           loadingBar.style.display = "none";
           fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);
