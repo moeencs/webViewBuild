@@ -110,8 +110,7 @@
       script.onload = () => {
         document.getElementById("unity-action-button").onclick = () => {
           const value = prompt("Enter the value to send to Unity");
-          // FIXME: now only integer values are supported by unity code
-          window.unityInstance.SendMessage("LoadModelFromURL", "GetDataFromButtonClick", parseInt(value));
+          window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectID", Number(value));
         };
 
         createUnityInstance(canvas, config, (progress) => {
