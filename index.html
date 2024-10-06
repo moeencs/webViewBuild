@@ -101,7 +101,7 @@
             document.getElementById("unity-action-message-button").onclick = () => {
                 const id = prompt("Enter the ID to send to Unity");
                 const message = prompt("Enter the message to send to Unity");
-                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", `${Number(id)},${message}`);
+                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", `${Number(id)}`, message);
             };
 
             // Call OnClickMultipleId function
