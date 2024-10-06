@@ -124,12 +124,12 @@
 
             // Call SwitchCameraToPlayerView function
             document.getElementById("unity-playerview-button").onclick = () => {
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView");
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView",);
             };
 
             // Call SwitchCameraToFreeMod function
             document.getElementById("unity-freemode-button").onclick = () => {
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod");
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod",);
             };
 
             createUnityInstance(canvas, config, (progress) => {
