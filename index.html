@@ -101,7 +101,12 @@
             document.getElementById("unity-action-message-button").onclick = () => {
                 const id = prompt("Enter the ID to send to Unity");
                 const message = prompt("Enter the message to send to Unity");
-                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", Number(id), message);
+
+                // Combine ID and message into a single string, using ':' as a separator
+                const id_message = `${id}:${message}`;
+
+                // Send the combined string to Unity
+                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", id_message);
             };
 
             // Call OnClickMultipleId function
@@ -124,12 +129,14 @@
 
             // Call SwitchCameraToPlayerView function
             document.getElementById("unity-playerview-button").onclick = () => {
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView",);
+                const value = 0;
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView", value);
             };
 
             // Call SwitchCameraToFreeMod function
             document.getElementById("unity-freemode-button").onclick = () => {
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod",);
+                const value = 0;
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod", value);
             };
 
             createUnityInstance(canvas, config, (progress) => {
