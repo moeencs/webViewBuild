@@ -130,13 +130,13 @@
             // Call SwitchCameraToPlayerView function
             document.getElementById("unity-playerview-button").onclick = () => {
                 const value = 0;
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView", value);
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView", Number(value));
             };
 
             // Call SwitchCameraToFreeMod function
             document.getElementById("unity-freemode-button").onclick = () => {
                 const value = 0;
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod", value);
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod", Number(value));
             };
 
             createUnityInstance(canvas, config, (progress) => {
