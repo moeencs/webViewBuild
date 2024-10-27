@@ -30,8 +30,15 @@
             <div id="unity-build-title">3D_Viewer</div>
         </div>
     </div>
+    <script>window.modelDataUrl = window.location.href + '/models/ready.zip';
 
-    <script>var container = document.querySelector("#unity-container");
+        window.handleViewerMessage = function (message) {
+            alert('Message from Unity:\n' + message);
+        };
+        window.handleViewerMultipleIDs = function (message) {
+            alert('Message from Unity:\n' + message);
+        };
+        var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingBar = document.querySelector("#unity-loading-bar");
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
@@ -42,13 +49,12 @@
             function updateBannerVisibility() {
                 warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
             }
-
             var div = document.createElement('div');
             div.innerHTML = msg;
             warningBanner.appendChild(div);
-            if (type === 'error') div.style = 'background: red; padding: 10px;';
+            if (type == 'error') div.style = 'background: red; padding: 10px;';
             else {
-                if (type === 'warning') div.style = 'background: yellow; padding: 10px;';
+                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
                 setTimeout(function () {
                     warningBanner.removeChild(div);
                     updateBannerVisibility();
@@ -88,6 +94,54 @@
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = () => {
+            // Call GetObjectID function
+            document.getElementById("unity-action-button").onclick = () => {
+                const value = prompt("Enter the value to send to Unity");
+                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectID", Number(value));
+            };
+
+            // Call GetObjectIDWithMassage function
+            document.getElementById("unity-action-message-button").onclick = () => {
+                const id = prompt("Enter the ID to send to Unity");
+                const message = prompt("Enter the message to send to Unity");
+
+                // Combine ID and message into a single string, using ':' as a separator
+                const id_message = `${id}:${message}`;
+
+                // Send the combined string to Unity
+                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", id_message);
+            };
+
+            // Call OnClickMultipleId function
+            document.getElementById("unity-multiple-ids-button").onclick = () => {
+                const ids = prompt("Enter the multiple IDs to send to Unity (comma-separated)");
+                window.unityInstance.SendMessage("LoadModelFromURL", "OnClickMultipleId", ids);
+            };
+
+            // Call OnTopDownViewSelected function
+            document.getElementById("unity-topdown-button").onclick = () => {
+                const ids = prompt("Enter the IDs for Top Down View (comma-separated)");
+                window.unityInstance.SendMessage("LoadModelFromURL", "OnTopDownViewSelected", ids);
+            };
+
+            // Call OnBottomUpViewSelected function
+            document.getElementById("unity-bottomup-button").onclick = () => {
+                const ids = prompt("Enter the IDs for Bottom Up View (comma-separated)");
+                window.unityInstance.SendMessage("LoadModelFromURL", "OnBottomUpViewSelected", ids);
+            };
+
+            // Call SwitchCameraToPlayerView function
+            document.getElementById("unity-playerview-button").onclick = () => {
+                const value = 0;
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView", Number(value));
+            };
+
+            // Call SwitchCameraToFreeMod function
+            document.getElementById("unity-freemode-button").onclick = () => {
+                const value = 0;
+                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod", Number(value));
+            };
+
             createUnityInstance(canvas, config, (progress) => {
                 progressBarFull.style.width = 100 * progress + "%";
             }).then((unityInstance) => {
@@ -96,47 +150,11 @@
                 fullscreenButton.onclick = () => {
                     unityInstance.SetFullscreen(1);
                 };
-
-                // Button interactions
-                document.getElementById("unity-action-button").onclick = () => {
-                    const value = prompt("Enter the value to send to Unity");
-                    unityInstance.SendMessage("LoadModelFromURL", "GetObjectID", Number(value));
-                };
-
-                document.getElementById("unity-action-message-button").onclick = () => {
-                    const id = prompt("Enter the ID to send to Unity");
-                    const message = prompt("Enter the message to send to Unity");
-                    const id_message = `${id}:${message}`;
-                    unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", id_message);
-                };
-
-                document.getElementById("unity-multiple-ids-button").onclick = () => {
-                    const ids = prompt("Enter the multiple IDs to send to Unity (comma-separated)");
-                    unityInstance.SendMessage("LoadModelFromURL", "OnClickMultipleId", ids);
-                };
-
-                document.getElementById("unity-topdown-button").onclick = () => {
-                    const ids = prompt("Enter the IDs for Top Down View (comma-separated)");
-                    unityInstance.SendMessage("LoadModelFromURL", "OnTopDownViewSelected", ids);
-                };
-
-                document.getElementById("unity-bottomup-button").onclick = () => {
-                    const ids = prompt("Enter the IDs for Bottom Up View (comma-separated)");
-                    unityInstance.SendMessage("LoadModelFromURL", "OnBottomUpViewSelected", ids);
-                };
-
-                document.getElementById("unity-playerview-button").onclick = () => {
-                    unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView", 0);
-                };
-
-                document.getElementById("unity-freemode-button").onclick = () => {
-                    unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod", 0);
-                };
-
             }).catch((message) => {
                 alert(message);
             });
         };
         document.body.appendChild(script);</script>
+
 </body>
 </html>
