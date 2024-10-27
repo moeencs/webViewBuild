@@ -1,159 +1,119 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | 3D_Viewer</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-</head>
-<body>
+  </head>
+  <body>
     <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width=960 height=600></canvas>
-        <div id="unity-loading-bar">
-            <div id="unity-logo"></div>
-            <div id="unity-progress-bar-empty">
-                <div id="unity-progress-bar-full"></div>
-            </div>
+      <canvas id="unity-canvas" width=960 height=600></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
-        <div id="unity-warning"> </div>
-        <div id="unity-footer">
-            <div id="unity-webgl-logo"></div>
-            <button id="unity-action-button">Send value to Unity</button>
-            <button id="unity-action-message-button">Send ID and Message to Unity</button>
-            <button id="unity-multiple-ids-button">Send Multiple IDs to Unity</button>
-            <button id="unity-topdown-button">Select Top Down View</button>
-            <button id="unity-bottomup-button">Select Bottom Up View</button>
-            <button id="unity-playerview-button">Switch Camera to Player View</button>
-            <button id="unity-freemode-button">Switch Camera to Free Mode</button>
-            <div id="unity-fullscreen-button"></div>
-            <div id="unity-build-title">3D_Viewer</div>
-        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">3D_Viewer</div>
+      </div>
     </div>
-    <script>window.modelDataUrl = window.location.href + '/models/ready.zip';
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var warningBanner = document.querySelector("#unity-warning");
 
-        window.handleViewerMessage = function (message) {
-            alert('Message from Unity:\n' + message);
-        };
-        window.handleViewerMultipleIDs = function (message) {
-            alert('Message from Unity:\n' + message);
-        };
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector("#unity-progress-bar-full");
-        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-        var warningBanner = document.querySelector("#unity-warning");
-
-        function unityShowBanner(msg, type) {
-            function updateBannerVisibility() {
-                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-            }
-            var div = document.createElement('div');
-            div.innerHTML = msg;
-            warningBanner.appendChild(div);
-            if (type == 'error') div.style = 'background: red; padding: 10px;';
-            else {
-                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-                setTimeout(function () {
-                    warningBanner.removeChild(div);
-                    updateBannerVisibility();
-                }, 5000);
-            }
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
             updateBannerVisibility();
+          }, 5000);
         }
+        updateBannerVisibility();
+      }
 
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/WebBuildTest.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/WebBuildTest.data",
-            frameworkUrl: buildUrl + "/WebBuildTest.framework.js",
-            codeUrl: buildUrl + "/WebBuildTest.wasm",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "3D_Viewer",
-            productVersion: "0.1",
-            showBanner: unityShowBanner,
-        };
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/WebBuildTest.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/WebBuildTest.data",
+        frameworkUrl: buildUrl + "/WebBuildTest.framework.js",
+        codeUrl: buildUrl + "/WebBuildTest.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "3D_Viewer",
+        productVersion: "0.1",
+        showBanner: unityShowBanner,
+      };
 
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            var meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            container.className = "unity-mobile";
-            canvas.className = "unity-mobile";
-            unityShowBanner('WebGL builds are not supported on mobile devices.');
-        } else {
-            canvas.style.width = "960px";
-            canvas.style.height = "600px";
-        }
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
 
-        loadingBar.style.display = "block";
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
 
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            // Call GetObjectID function
-            document.getElementById("unity-action-button").onclick = () => {
-                const value = prompt("Enter the value to send to Unity");
-                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectID", Number(value));
-            };
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
 
-            // Call GetObjectIDWithMassage function
-            document.getElementById("unity-action-message-button").onclick = () => {
-                const id = prompt("Enter the ID to send to Unity");
-                const message = prompt("Enter the message to send to Unity");
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
 
-                // Combine ID and message into a single string, using ':' as a separator
-                const id_message = `${id}:${message}`;
+        unityShowBanner('WebGL builds are not supported on mobile devices.');
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
-                // Send the combined string to Unity
-                window.unityInstance.SendMessage("LoadModelFromURL", "GetObjectIDWithMassage", id_message);
-            };
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
 
-            // Call OnClickMultipleId function
-            document.getElementById("unity-multiple-ids-button").onclick = () => {
-                const ids = prompt("Enter the multiple IDs to send to Unity (comma-separated)");
-                window.unityInstance.SendMessage("LoadModelFromURL", "OnClickMultipleId", ids);
-            };
+      loadingBar.style.display = "block";
 
-            // Call OnTopDownViewSelected function
-            document.getElementById("unity-topdown-button").onclick = () => {
-                const ids = prompt("Enter the IDs for Top Down View (comma-separated)");
-                window.unityInstance.SendMessage("LoadModelFromURL", "OnTopDownViewSelected", ids);
-            };
-
-            // Call OnBottomUpViewSelected function
-            document.getElementById("unity-bottomup-button").onclick = () => {
-                const ids = prompt("Enter the IDs for Bottom Up View (comma-separated)");
-                window.unityInstance.SendMessage("LoadModelFromURL", "OnBottomUpViewSelected", ids);
-            };
-
-            // Call SwitchCameraToPlayerView function
-            document.getElementById("unity-playerview-button").onclick = () => {
-                const value = 0;
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToPlayerView", Number(value));
-            };
-
-            // Call SwitchCameraToFreeMod function
-            document.getElementById("unity-freemode-button").onclick = () => {
-                const value = 0;
-                window.unityInstance.SendMessage("LoadModelFromURL", "SwitchCameraToFreeMod", Number(value));
-            };
-
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                window.unityInstance = unityInstance;
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                    unityInstance.SetFullscreen(1);
-                };
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);</script>
-</body>
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+          fullscreenButton.onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
 </html>
