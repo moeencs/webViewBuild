@@ -63,21 +63,17 @@
             updateBannerVisibility();
         }
 
-        var wasmUrl = "Build/WebBuildTest.wasm";
-        if ('brotli' in window) {
-            wasmUrl += ".br";
-        } else if ('gz' in window) {
-            wasmUrl += ".gz";
-        }
-
-        ar config = {
-            dataUrl: "Build/WebBuildTest.data",
-            frameworkUrl: "Build/WebBuildTest.framework.js",
-            codeUrl: wasmUrl,
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/WebBuildTest.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/WebBuildTest.data",
+            frameworkUrl: buildUrl + "/WebBuildTest.framework.js",
+            codeUrl: buildUrl + "/WebBuildTest.wasm",
             streamingAssetsUrl: "StreamingAssets",
             companyName: "DefaultCompany",
             productName: "3D_Viewer",
             productVersion: "0.1",
+            showBanner: unityShowBanner,
         };
 
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
